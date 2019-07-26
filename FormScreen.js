@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
-import {Text, View, Button, StyleSheet, TextInput, KeyboardAvoidingView, ScrollView} from 'react-native';
+import {Text, View, Button, StyleSheet, TextInput, KeyboardAvoidingView, Alert} from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-import ImagePicker from 'react-native-imagepicker';
-
+import ImagePicker from 'react-native-image-picker';
 
 var radio_props = [
   {label: 'Male', value: 0}, { label: 'Female', value: 1}, {label: 'Other', value: 2}
 ];
+var myNavigate;
 
 export default class FormPage extends Component {
 
@@ -18,20 +18,16 @@ export default class FormPage extends Component {
       emailField: '', 
       phoneNumberField: '',
       isDatePickerVisible: false,
-      date:'',
+      date: '',
       imageField: '',
       value: 0
     };
   }
-
   static navigationOptions={
     title: 'Form Screen'
   };
-
-  submitTheForm() {
-      
-  }
-
+   
+  
   showDateTimePicker = () => {
     this.setState({isDatePickerVisible: true});
   };
@@ -40,16 +36,62 @@ export default class FormPage extends Component {
     this.setState({isDatePickerVisible: false});
   };
 
+  submitButtonAction= ()=>{
+      if(this.emailField=='') {
+        Alert.alert('Name and Email Field are Mandatory')
+      } else {
+        myNavigate('InformationScreen', {
+          JSON_ListView_Clicked_Item1: this.state.nameField,
+          JSON_ListView_Clicked_Item2: this.state.emailField,
+          JSON_ListView_Clicked_Item3: this.state.phoneNumberField,
+          JSON_ListView_Clicked_Item4: this.state.date, 
+          JSON_ListView_Clicked_Item5: this.state.value,
+          JSON_ListView_Clicked_Item6: this.state.imageField
+    })
+      }
+  };
+
   handleDatePicked = date => {
-    console.log("<><><><>123", date);
-    this.setState({date});
+    var day = new Date().getDate();
+    var month = new Date().getMonth();
+    var year = new Date().getFullYear();
+    console.log("var date", day,month);
+    this.setState({date: day + '/' + month + '/' + year});
     this.hideDateTimePicker();
   };
+
+  selectPhotoTapped(){
+    const options = {
+      quality: 1.0,
+      maxWidth: 500,
+      maxHeight: 500,
+      storageOptions: {
+        skipBackup: true,
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      console.log('Response = ', response);
+      if (response.didCancel) {
+        console.log('User cancelled photo picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        let source = {uri: response.uri};
+        this.setState({
+          avatarSource: source,
+        });
+      }
+    });
+  }
 
   render() {
 
     const {navigate}=this.props.navigation;
-
+    myNavigate=navigate;
+    
     return(
 
     <View style={myStyles.mainContainer}>
@@ -57,7 +99,7 @@ export default class FormPage extends Component {
         <Text style={myStyles.labelFormat}>
           Enter Your Details 
         </Text>
-
+  
         <TextInput placeholder='Enter Your Name' 
                    type='datetime'
                    value={this.state.nameField}
@@ -93,14 +135,9 @@ export default class FormPage extends Component {
                         onConfirm={this.handleDatePicked}
                         onCancel={this.hideDateTimePicker}/>  
 
-        
-        <Button onPress={()=>navigate('InformationScreen', {
-                             JSON_ListView_Clicked_Item1: this.state.nameField,
-                             JSON_ListView_Clicked_Item2: this.state.emailField,
-                             JSON_ListView_Clicked_Item3: this.state.phoneNumberField,
-                             JSON_ListView_Clicked_Item4: this.state.date, 
-                             JSON_ListView_Clicked_Item5: this.state.value
-        })} 
+        <Button title='Upload Profile Image' onPress={this.selectPhotoTapped}/>                
+
+        <Button onPress={this.submitButtonAction} 
                 title='Submit' color='red'/>                     
 
         <KeyboardAvoidingView behavior='padding' enabled></KeyboardAvoidingView>
@@ -112,12 +149,22 @@ export default class FormPage extends Component {
 
 const myStyles = StyleSheet.create({
   mainContainer: {
-    flex: 1, backgroundColor: 'yellow', padding: 50, 
-    justifyContent: 'space-evenly', alignItems: 'center'
-  }, textBoxInput: {
-    backgroundColor: 'yellowgreen', height: 50, width: 300, 
-    textAlign: 'center', fontSize: 20
-  }, labelFormat: {
-    color: 'orangered', fontSize: 30, fontWeight: 'bold'
+    flex: 1, 
+    backgroundColor: 'yellow', 
+    padding: 50, 
+    justifyContent: 'space-evenly', 
+    alignItems: 'center'
+  }, 
+  textBoxInput: {
+    backgroundColor: 'yellowgreen', 
+    height: 50, 
+    width: 300, 
+    textAlign: 'center', 
+    fontSize: 20
+  }, 
+  labelFormat: {
+    color: 'orangered', 
+    fontSize: 30,
+    fontWeight: 'bold'
   }
 });

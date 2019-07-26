@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-// import console = require('console');
-
+import { StyleSheet, View, Text, Image } from 'react-native';
 
 export default class InformationScreen extends Component {
 
@@ -11,21 +9,20 @@ export default class InformationScreen extends Component {
   constructor(props) {
     super(props);
     this.state={
-      myDateElement: this.props.navigation.state.params.JSON_ListView_Clicked_Item4,
+      myDateElement: this.props.navigation.state.params.JSON_ListView_Clicked_Item4.toString(),
+      myImage: this.props.navigation.state.params.JSON_ListView_Clicked_Item5
     }
-    //  var myDateElement = 
-    // let radioValue = this.props.navigate.state.params.JSON_ListView_Clicked_Item5;
-    // console.log("radiovalue", radioValue);
   }
 
   render() {
 
     const { navigate } = this.props.navigation;
 
-    var radioLabel = '';
-
     return (
       <View style={myStyle.mainContainer}>
+
+        <Image source={this.state.myImage} style={{width:100, height:100, backgroundColor: 'grey'}}/>
+        
         <Text style={myStyle.textStyle}>
           Name:      {this.props.navigation.state.params.JSON_ListView_Clicked_Item1}
         </Text>
@@ -38,7 +35,7 @@ export default class InformationScreen extends Component {
         <Text style={myStyle.textStyle}>
           Date of Birth:      {this.state.myDateElement}
         </Text>
-        <Text>
+        <Text style={myStyle.textStyle}>
                     Gender:     {this.props.navigation.state.params.JSON_ListView_Clicked_Item5}
          </Text>
       </View>
