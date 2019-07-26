@@ -4,6 +4,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import ImagePicker from 'react-native-imagepicker';
 
+
 var radio_props = [
   {label: 'Male', value: 0}, { label: 'Female', value: 1}, {label: 'Other', value: 2}
 ];
@@ -17,9 +18,15 @@ export default class FormPage extends Component {
       emailField: '', 
       phoneNumberField: '',
       isDatePickerVisible: false,
-      imageField: ''
+      date:'',
+      imageField: '',
+      value: 0
     };
   }
+
+  static navigationOptions={
+    title: 'Form Screen'
+  };
 
   submitTheForm() {
       
@@ -34,11 +41,17 @@ export default class FormPage extends Component {
   };
 
   handleDatePicked = date => {
+    console.log("<><><><>123", date);
+    this.setState({date});
     this.hideDateTimePicker();
   };
 
   render() {
+
+    const {navigate}=this.props.navigation;
+
     return(
+
     <View style={myStyles.mainContainer}>
         
         <Text style={myStyles.labelFormat}>
@@ -80,7 +93,15 @@ export default class FormPage extends Component {
                         onConfirm={this.handleDatePicked}
                         onCancel={this.hideDateTimePicker}/>  
 
-        <Button onPress={this.submitTheForm} title='Submit' color='red'/>                     
+        
+        <Button onPress={()=>navigate('InformationScreen', {
+                             JSON_ListView_Clicked_Item1: this.state.nameField,
+                             JSON_ListView_Clicked_Item2: this.state.emailField,
+                             JSON_ListView_Clicked_Item3: this.state.phoneNumberField,
+                             JSON_ListView_Clicked_Item4: this.state.date, 
+                             JSON_ListView_Clicked_Item5: this.state.value
+        })} 
+                title='Submit' color='red'/>                     
 
         <KeyboardAvoidingView behavior='padding' enabled></KeyboardAvoidingView>
         
