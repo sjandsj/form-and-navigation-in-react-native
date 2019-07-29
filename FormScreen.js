@@ -137,10 +137,6 @@ export default class FormPage extends Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = { uri: response.uri };
-    
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    
         this.setState({
           avatarSource: source,
         });
