@@ -10,7 +10,7 @@ export default class InformationScreen extends Component {
     super(props);
     this.state={
       myDateElement: this.props.navigation.state.params.JSON_ListView_Clicked_Item4.toString(),
-      myImage: this.props.navigation.state.params.JSON_ListView_Clicked_Item5
+      myImage: this.props.navigation.state.params.JSON_ListView_Clicked_Item6.toString()
     }
   }
 
@@ -36,7 +36,7 @@ export default class InformationScreen extends Component {
           Date of Birth:      {this.state.myDateElement}
         </Text>
         <Text style={myStyle.textStyle}>
-                    Gender:     {this.props.navigation.state.params.JSON_ListView_Clicked_Item5}
+                    Gender:     {this.props.navigation.state.params.JSON_ListView_Clicked_Item5.label}
          </Text>
       </View>
     );

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Text, View, Button, StyleSheet, TextInput, KeyboardAvoidingView, Alert} from 'react-native';
+import {Text,Image, View, Button, StyleSheet, TextInput, KeyboardAvoidingView, Alert} from 'react-native';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import ImagePicker from 'react-native-image-picker';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 var radio_props = [
   {label: 'Male', value: 0}, { label: 'Female', value: 1}, {label: 'Other', value: 2}
@@ -15,14 +16,19 @@ export default class FormPage extends Component {
     super(props);
     this.state = {
       nameField: '',
+      nameValidation: true,
       emailField: '', 
+      emailValidation: true,
       phoneNumberField: '',
+      phoneNumberValidation: true,
       isDatePickerVisible: false,
       date: '',
-      imageField: '',
-      value: 0
+      avatarSource: '',
+      value: 0,
+      item: {}
     };
   }
+
   static navigationOptions={
     title: 'Form Screen'
   };
@@ -36,18 +42,67 @@ export default class FormPage extends Component {
     this.setState({isDatePickerVisible: false});
   };
 
-  submitButtonAction= ()=>{
-      if(this.emailField=='') {
+
+  navigatingToSecondScreen = () => {
+  myNavigate('InformationScreen', {
+      JSON_ListView_Clicked_Item1: this.state.nameField,
+      JSON_ListView_Clicked_Item2: this.state.emailField,
+      JSON_ListView_Clicked_Item3: this.state.phoneNumberField,
+      JSON_ListView_Clicked_Item4: this.state.date, 
+      JSON_ListView_Clicked_Item5: this.state.item,
+      //JSON_ListView_Clicked_Item6: this.state.imageField
+})
+  };
+
+  checkNameValidation(nameField) {
+    alph=/^[a-zA-Z]+$/;
+    if(alph.test(nameField)) {
+      return true
+    } else {
+      return false
+    }
+  };
+
+  checkEmailValidation(emailField) {
+    email=/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    if(email.test(emailField)) {
+      return true
+    } else {
+      return false
+    }
+  };
+
+  checkPhoneNumberValidation(phoneNumberField) {
+    num=/^[0-9]+$/;
+    if(num.test(phoneNumberField)) {
+      return true
+    } else {
+      return false
+    }
+  };
+
+  submitButtonAction=()=>{
+      if((this.state.emailField==='')||(this.state.nameField==='')) {
         Alert.alert('Name and Email Field are Mandatory')
+  
       } else {
-        myNavigate('InformationScreen', {
-          JSON_ListView_Clicked_Item1: this.state.nameField,
-          JSON_ListView_Clicked_Item2: this.state.emailField,
-          JSON_ListView_Clicked_Item3: this.state.phoneNumberField,
-          JSON_ListView_Clicked_Item4: this.state.date, 
-          JSON_ListView_Clicked_Item5: this.state.value,
-          JSON_ListView_Clicked_Item6: this.state.imageField
-    })
+
+        if (!this.checkNameValidation(this.state.nameField)) {
+          Alert.alert('Please Enter A valid Name')
+          return
+        } else if (!this.checkEmailValidation(this.state.emailField)) {
+          Alert.alert(' Please Enter A valid Email')
+          return
+        } else if (!this.checkPhoneNumberValidation(this.state.phoneNumberField)){
+            if(this.state.phoneNumberField==='') {
+              
+            }
+            else {
+              Alert.alert('Please Enter a valid Number');
+            return
+          }
+        }
+        this.navigatingToSecondScreen();
       }
   };
 
@@ -66,56 +121,62 @@ export default class FormPage extends Component {
       maxWidth: 500,
       maxHeight: 500,
       storageOptions: {
-        skipBackup: true,
+      skipBackup: true,
+      path: 'images'
       },
     };
 
-    ImagePicker.showImagePicker(options, response => {
+    ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
+    
       if (response.didCancel) {
-        console.log('User cancelled photo picker');
+        console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else if (response.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        let source = {uri: response.uri};
+        const source = { uri: response.uri };
+    
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    
         this.setState({
           avatarSource: source,
         });
       }
     });
-  }
+  };
 
   render() {
 
     const {navigate}=this.props.navigation;
     myNavigate=navigate;
     
-    return(
-
+    return( 
     <View style={myStyles.mainContainer}>
-        
+            
         <Text style={myStyles.labelFormat}>
           Enter Your Details 
         </Text>
-  
+        {/* <Image source={this.state.imageField} style={{width: 100, height:100}} /> */}
+
         <TextInput placeholder='Enter Your Name' 
                    type='datetime'
                    value={this.state.nameField}
                    placeholderTextColor='black' 
-                   onChangeText={nameField => this.setState({nameField})}
-                   style={myStyles.textBoxInput}/>
+                   onChangeText={(nameField)=>this.setState({nameField})}
+                   style={[!this.state.nameValidation], myStyles.textBoxInput}/>
         
         <TextInput value={this.state.emailField}
-                   onChangeText={emailField => this.setState({emailField})}
+                   onChangeText={(emailField) => this.setState({emailField})}
                    placeholder='Enter Your Email'
                    keyboardType='email-address'
                    placeholderTextColor='black'
                    style={myStyles.textBoxInput} />
 
         <TextInput value={this.state.phoneNumberField}
-                   onChangeText={phoneNumberField => this.setState({phoneNumberField})}
+                   onChangeText={(phoneNumberField) => this.setState({phoneNumberField})}
                    placeholder='Enter Your Phone Number'
                    returnKeyType='done'
                    placeholderTextColor='black' 
@@ -125,10 +186,11 @@ export default class FormPage extends Component {
         <Text style={{fontWeight: 'bold', fontSize: 15, color: 'black'}} >
           Please Select Your Gender
         </Text>
-        <RadioForm radio_props={radio_props} 
-                   labelColor={'red'} onPress={(value) => {this.setState({value:value})}}/>           
+        <RadioForm radio_props={radio_props} initial={0} 
+                   labelHorizontal={true} 
+                   labelColor={'red'} onPress={(value) => {radio_props.map((item) => 
+                   {item.value === value && this.setState({item: item})})}}/>           
         
-
         <Button title='Select Date Of Birth'
                 onPress={this.showDateTimePicker}/>
         <DateTimePicker isVisible={this.state.isDatePickerVisible}
@@ -141,8 +203,11 @@ export default class FormPage extends Component {
                 title='Submit' color='red'/>                     
 
         <KeyboardAvoidingView behavior='padding' enabled></KeyboardAvoidingView>
-        
+     
     </View>
+        
+    
+  
     );
   }
 }
