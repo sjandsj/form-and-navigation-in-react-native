@@ -9,11 +9,15 @@ var radio_props = [
   {label: 'Male', value: 0}, { label: 'Female', value: 1}, {label: 'Other', value: 2}
 ];
 var myNavigate;
+let test123;
+
+
 
 export default class FormPage extends Component {
 
   constructor(props) {
     super(props);
+    test123=this;
     this.state = {
       nameField: '',
       nameValidation: true,
@@ -42,7 +46,6 @@ export default class FormPage extends Component {
     this.setState({isDatePickerVisible: false});
   };
 
-
   navigatingToSecondScreen = () => {
   myNavigate('InformationScreen', {
       JSON_ListView_Clicked_Item1: this.state.nameField,
@@ -50,7 +53,8 @@ export default class FormPage extends Component {
       JSON_ListView_Clicked_Item3: this.state.phoneNumberField,
       JSON_ListView_Clicked_Item4: this.state.date, 
       JSON_ListView_Clicked_Item5: this.state.item,
-      //JSON_ListView_Clicked_Item6: this.state.imageField
+      JSON_ListView_Clicked_Item6: this.state.avatarSource, 
+      
 })
   };
 
@@ -125,7 +129,6 @@ export default class FormPage extends Component {
       path: 'images'
       },
     };
-
     ImagePicker.showImagePicker(options, (response) => {
       console.log('Response = ', response);
     
@@ -137,7 +140,7 @@ export default class FormPage extends Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const source = { uri: response.uri };
-        this.setState({
+        test123.setState({
           avatarSource: source,
         });
       }
@@ -155,7 +158,7 @@ export default class FormPage extends Component {
         <Text style={myStyles.labelFormat}>
           Enter Your Details 
         </Text>
-        {/* <Image source={this.state.imageField} style={{width: 100, height:100}} /> */}
+        
 
         <TextInput placeholder='Enter Your Name' 
                    type='datetime'
@@ -202,8 +205,6 @@ export default class FormPage extends Component {
      
     </View>
         
-    
-  
     );
   }
 }

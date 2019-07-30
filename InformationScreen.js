@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
+// import console = require('console');
 
 export default class InformationScreen extends Component {
 
@@ -10,7 +11,7 @@ export default class InformationScreen extends Component {
     super(props);
     this.state={
       myDateElement: this.props.navigation.state.params.JSON_ListView_Clicked_Item4.toString(),
-      myImage: this.props.navigation.state.params.JSON_ListView_Clicked_Item6.toString()
+      myImage: this.props.navigation.state.params.JSON_ListView_Clicked_Item6
     }
   }
 
@@ -20,8 +21,10 @@ export default class InformationScreen extends Component {
 
     return (
       <View style={myStyle.mainContainer}>
-
-        <Image source={this.state.myImage} style={{width:100, height:100, backgroundColor: 'grey'}}/>
+{
+  console.log("info scren", this.state.myImage)
+}
+        <Image style={{width: 100, height: 100}} source={this.state.myImage}/>
         
         <Text style={myStyle.textStyle}>
           Name:      {this.props.navigation.state.params.JSON_ListView_Clicked_Item1}
@@ -45,9 +48,9 @@ export default class InformationScreen extends Component {
 
 const myStyle = StyleSheet.create({
   mainContainer: {
-    flex: 1, backgroundColor: 'cornflowerblue', justifyContent: 'space-evenly',
+    flex: 1, justifyContent: 'space-evenly', backgroundColor: 'indianred',
     alignItems: 'center'
   }, textStyle: {
-    fontSize: 25, fontWeight: '900', color: 'orange'
+    fontSize: 20, fontWeight: '900', color: 'lawngreen'
   }
 });
